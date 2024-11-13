@@ -38,7 +38,6 @@ build:
          node-version: ${{ matrix.node-version }}
          cache: yarn
 
-
      - run: yarn install
 
 
@@ -47,7 +46,6 @@ build:
 
      - name: Building the service for deployment
        run: yarn run build
-
 
      - name: Deploying APP To Master
        run: rsync -a -r -d package.json processes.json  ./dist ${{ secrets.SERVER_DEPLOY_USER }}@${{ secrets.SERVER_DEPLOY_HOST }}:${{secrets.SERVER_DEPLOY_PATH}}

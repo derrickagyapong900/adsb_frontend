@@ -59,7 +59,7 @@ function App() {
 
   useState(() => {
     fetchDataFromBackend(hour, resolution, day);
-    // setIsPlaying(true)
+  
 
   
   }, []);
