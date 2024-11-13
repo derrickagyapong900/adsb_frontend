@@ -18,11 +18,18 @@ function App() {
   const [zoom, setZoom] = useState(INITIAL_ZOOM);
   const [geojsonData, setGeojsonData] = useState();
   const [selectedFeature, setSelectedFeature] = useState(null);
+  const [statistics, setStatistics] = useState({
+    activeParam: "",
+    month: "",
+    day: "",
+    hour: "",
+    hex_res: ""
+  })
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [hour, setHour] = useState(1);
   const [resolution, setResolution] = useState(0);
-  const [day, setDay] = useState(13);
+  const [day, setDay] = useState(14);
   const [month, setMonth] = useState(10);
   const [parameterSelect, setParameterSelect] = useState("nic");
 
@@ -52,10 +59,22 @@ function App() {
 
   useState(() => {
     fetchDataFromBackend(hour, resolution, day);
+    // setIsPlaying(true)
+
+  
   }, []);
+
+
 
   useEffect(() => {
     fetchDataFromBackend(hour, resolution, day);
+    setStatistics({
+      activeParam: parameterSelect,
+      month: month,
+      day: day,
+      hour: hour,
+      hex_res: resolution
+    })
   }, [hour, resolution, day]);
 
   useEffect(() => {
@@ -68,13 +87,13 @@ function App() {
     } else if (parameterSelect == "nacp") {
       setFillColors({
         value: "average_nacp",
-        activeColor: "#0000ff", // Color for average_nic > 7
+        activeColor: "#FF5733", // Color for average_nic > 7
         defaultColor: "#363636", // Default color
       });
     } else if (parameterSelect == "nacv") {
       setFillColors({
         value: "average_nacv",
-        activeColor: "#FF5733", // Color for average_nic > 7
+        activeColor: "#0000ff", // Color for average_nic > 7
         defaultColor: "#363636", // Default color
       });
     } else if (parameterSelect == "sil") {
@@ -92,9 +111,25 @@ function App() {
     }
   }, [parameterSelect]);
 
+
+
+
+
+ 
+
   const handleMapLoad = (event) => {
     const map = event.target; // The map instance from the load event
     mapRef.current = map; // Store the map instance in the ref
+
+    setIsPlaying(true)
+    
+    setStatistics({
+      activeParam: parameterSelect,
+      month: month,
+      day: day,
+      hour: hour,
+      hex_res: resolution
+    })
 
     // Add click event listener
     map.on("click", (e) => {
@@ -135,6 +170,24 @@ function App() {
         }
       }
     });
+    // setIsPlaying(true)
+
+        // Pause spinning on interaction
+        map.on("mousedown", () => {
+          userInteracting = true;
+      });
+      map.on("dragstart", () => {
+          userInteracting = true;
+      });
+  
+  
+      // When animation is complete, start spinning if there is no ongoing interaction
+      map.on("moveend", () => {
+          spinGlobe(map);
+      });
+  
+  
+      spinGlobe(map);
   };
 
   const handleChangeHour = (e) => {
@@ -160,27 +213,61 @@ function App() {
 
   const handlePausePlay = () => {
     setIsPlaying(!isPlaying);
+  
   };
 
   useEffect(() => {
-    if (!isPlaying) return;
+    let intervalId;
+    let paramIntervalId;
+    let animationFrameId;
+    let pulseOpacity = 0.5;
+    let pulseDirection = 0.05;
+  
     const param = ["nic", "nacp"];
+    const hex = [0, 1, 2, 3, 4];
+    const map = mapRef.current;
+  
+    function animatePolygons() {
+      // Update pulse opacity between 0.3 and 1
+      pulseOpacity += pulseDirection;
+      if (pulseOpacity >= 1) {
+        pulseOpacity = 1;
+        pulseDirection *= -1;
+      } else if (pulseOpacity <= 0.3) {
+        pulseOpacity = 0.3;
+        pulseDirection *= -1;
+      }
+  
+      if (map && map.getLayer("ads_b-fill")) {
+        map.setPaintProperty("ads_b-fill", "fill-opacity", pulseOpacity);
+      }
+  
+      animationFrameId = requestAnimationFrame(animatePolygons);
+    }
+  
+    if (isPlaying && map && geojsonData) {
+      intervalId = setInterval(() => {
+        setHour((prevHour) => (prevHour % 24) + 1);
+      }, 5000);
 
-    console.log("is playing");
-    const intervalId = setInterval(() => {
-      setHour((prevHour) => (prevHour % 24) + 1);
-    }, 5000);
-    const paramIntervalId = setInterval(() => {
-      const randomIndex = Math.floor(Math.random() * param.length);
-      const randomItem = param[randomIndex];
-
-      setParameterSelect(randomItem);
-    }, 7000);
+  
+      paramIntervalId = setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * param.length);
+        const randomHexIndex = Math.floor(Math.random() * hex.length);
+        setParameterSelect(param[randomIndex]);
+        setResolution(hex[randomHexIndex]);
+      }, 5000);
+  
+      animatePolygons(); 
+    }
+  
     return () => {
       clearInterval(intervalId);
-      clearInterval(paramIntervalId)
+      clearInterval(paramIntervalId);
+      cancelAnimationFrame(animationFrameId);
     };
-  }, [isPlaying]);
+  }, [isPlaying, mapRef.current, geojsonData]);
+  
 
   console.log("geojsonData", geojsonData);
   console.log("day", day);
@@ -240,6 +327,37 @@ function App() {
     },
   };
 
+
+       // At low zooms, complete a revolution every two minutes.
+       const secondsPerRevolution = 24;
+       // Above zoom level 5, do not rotate.
+       const maxSpinZoom = 5;
+       // Rotate at intermediate speeds between zoom levels 3 and 5.
+       const slowSpinZoom = 3;
+
+
+       let userInteracting = false;
+       const spinEnabled = true;
+
+
+       function spinGlobe(map) {
+           const zoom = map.getZoom();
+           if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
+               let distancePerSecond = 30 / secondsPerRevolution;
+               if (zoom > slowSpinZoom) {
+                   // Slow spinning at higher zooms
+                   const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
+                   distancePerSecond *= zoomDif;
+               }
+               const center = map.getCenter();
+               center.lng -= distancePerSecond;
+               map.easeTo({ center, duration: 1000, easing: (n) => n });
+           }
+       }
+
+
+   
+
   return (
     <Map
       ref={mapRef}
@@ -274,6 +392,7 @@ function App() {
         day={day}
         handleDayChange={handleDayChange}
         month={month}
+        stats={statistics}
       />
 
       <Source id="ads_b" type="geojson" data={geojsonData}>

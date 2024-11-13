@@ -1,71 +1,44 @@
 import React, { useState } from "react";
 import "./display.css";
 
-function Display({handleChangeHour, hour, month, resolution, handleChangeResolution, isPlaying, handlePausePlay, parameterSelect, handleParamChange, day, handleDayChange}) {
-//   const [isPlaying, setIsPlaying] = useState(false);
-//   const [hour, setHour] = useState(1);
-//   const [resolution, setResolution] = useState(0);
-//   const [day, setDay] = useState(13);
-//   const [month, setMonth] = useState(10);
-//   const [parameterSelect, setParameterSelect] = useState("nic");
+function Display({handleChangeHour, hour, stats, month, resolution, handleChangeResolution, isPlaying, handlePausePlay, parameterSelect, handleParamChange, day, handleDayChange}) {
 
-//   const handleDayChange = (e) => {
-//     setDay(e.target.value);
-//   };
-//   const handleChangeHour = (e) => {
-//     if (e.target) {
-//       setHour(e.target.value);
-//     }
-//     this.props.OnChandleChangeHour(hour)
-//   };
-//   const handleChangeResolution = (e) => {
-//     if (e.target) {
-//       setResolution(e.target.value);
-//     }
-//   };
-//   const handlePausePlay = () => {
-//     setIsPlaying(!isPlaying);
-//   };
-//   const handleParamChange = (e) => {
-//     if (e.target) {
-//       setParameterSelect(e.target.value);
-//     }
-//   };
-//   console.log("isPlaying", isPlaying);
-//   console.log("day", day);
   return (
     <>
       <div className="content_area">
         <div>
+          
           <div className="forecast_decription ">
+            <h3 className="text-center text-xl font-bold">Activity Monitor</h3>
+            <hr className=""/>
             <div className="flex justify-between items-center my-1">
               <h4 className="forecast_tittle text-sm">Active Parameter:</h4>
               <p id="average_nic" className="font-bold text-sm">
-                NIC
+                {stats?.activeParam}
               </p>
             </div>
             <div className="flex justify-between items-center my-1">
               <h4 className="forecast_tittle text-sm">Month: </h4>
               <p id="average_nacp" className="font-bold text-sm">
-                October
+              {stats?.month}
               </p>
             </div>
             <div className="flex justify-between items-center my-1">
               <h4 className="forecast_tittle text-sm">Day: </h4>
               <p id="average_nacv" className="font-bold text-sm">
-                13
+              {stats?.day}
               </p>
             </div>
             <div className="flex justify-between items-center my-1">
               <h4 className="forecast_tittle text-sm">Hour:</h4>
               <p id="average_sil" className="font-bold text-sm">
-                5
+              {stats?.hour}
               </p>
             </div>
             <div className="flex justify-between items-center my-1">
               <h4 className="forecast_tittle text-sm">Hex Resolution:</h4>
               <p id="average_sil" className="font-bold text-sm">
-                3
+              {stats?.hex_res}
               </p>
             </div>
           </div>
@@ -83,13 +56,14 @@ function Display({handleChangeHour, hour, month, resolution, handleChangeResolut
               <div className="flex gap-10">
                 <div>
                   <label htmlFor="">Month</label>
-                  <select name="" id="">
+                  <select className="rounded-md px-2 py-1" name="" id="">
                     <option>October</option>
                   </select>
                 </div>
                 <div>
                   <label>Day</label>
-                  <select onChange={handleDayChange}>
+                  <select className="rounded-md px-2 py-1" onChange={handleDayChange}>
+                  <option value={day}>{day}</option>
                     <option value={"13"}>13</option>
                     <option value="14">14</option>
                     <option value="15">15</option>
@@ -101,7 +75,7 @@ function Display({handleChangeHour, hour, month, resolution, handleChangeResolut
                 </div>
               </div>
 
-              <div className="playPausebtn mt-5" onClick={handlePausePlay}>
+              <div className="playPausebtn mt-2" onClick={handlePausePlay}>
                 {isPlaying ? (
                   <i className="icon fa fa-pause"></i>
                 ) : (
@@ -109,7 +83,7 @@ function Display({handleChangeHour, hour, month, resolution, handleChangeResolut
                 )}
               </div>
             </div>
-            <div>
+            <div className="controller_slider">
               <div className="formContainer mb-6">
                 <div>
                   <label htmlFor="hour">Hour</label>
@@ -131,7 +105,7 @@ function Display({handleChangeHour, hour, month, resolution, handleChangeResolut
               <div className="formContainer ">
                 <div>
                   <label htmlFor="resolution" className="">
-                    Hex resolution:{" "}
+                    Hex Res:{" "}
                   </label>
                 </div>
                 <div>
