@@ -54,7 +54,7 @@ body {
  
  .forecast_period{
     background-color: rgba(255, 255, 255, 0.676);
-    /* width: 60%; */
+    width: 40%;
     height: 114px;
     border-radius: 9px;
  
@@ -75,13 +75,9 @@ body {
  
  /* NEW STYLING */
  .container_wrapper{
- display: flex
+ display: grid;
+ grid-template-columns: 25% 55%  20%;
  }
-
- .controller_slider{
-   width: 90%;
- }
-
  .formContainer{
     display: grid;
     grid-template-columns: 20% 70%;

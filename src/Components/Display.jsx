@@ -83,7 +83,7 @@ function Display({handleChangeHour, hour, stats, month, resolution, handleChange
                 )}
               </div>
             </div>
-            <div className="controller_slider">
+            <div className="controller_slider ml-5">
               <div className="formContainer mb-6">
                 <div>
                   <label htmlFor="hour">Hour</label>
