@@ -28,7 +28,7 @@ function App() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [hour, setHour] = useState(1);
-  const [resolution, setResolution] = useState(0);
+  const [resolution, setResolution] = useState(3);
   const [day, setDay] = useState(14);
   const [month, setMonth] = useState(10);
   const [parameterSelect, setParameterSelect] = useState("nic");
@@ -248,15 +248,15 @@ function App() {
     if (isPlaying && map && geojsonData) {
       intervalId = setInterval(() => {
         setHour((prevHour) => (prevHour % 24) + 1);
-      }, 5000);
+      }, 1000);
 
   
       paramIntervalId = setInterval(() => {
         const randomIndex = Math.floor(Math.random() * param.length);
         const randomHexIndex = Math.floor(Math.random() * hex.length);
-        setParameterSelect(param[randomIndex]);
-        setResolution(hex[randomHexIndex]);
-      }, 5000);
+        // setParameterSelect(param[randomIndex]);
+        // setResolution(hex[randomHexIndex]);
+      }, 1000);
   
       animatePolygons(); 
     }
