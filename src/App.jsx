@@ -9,6 +9,9 @@ import Display from "./Components/Display";
 const INITIAL_CENTER = [-95.712891, 37.09024];
 const INITIAL_ZOOM = 3.2;
 
+// http://127.0.0.1:5000
+const BASE_URL = "https://adsb-backend.onrender.com"
+
 function App() {
   const mapBoxAccessToken =
     "pk.eyJ1IjoiamFtaXNvbmphbmd1bGEiLCJhIjoiY2x1MDlucTF2MDVheDJrbnllYnU4ZG52NiJ9.nA8sNULxHddPbnd9g74YLw";
@@ -47,10 +50,10 @@ function App() {
   ) => {
     //TODO:: ALL
     // const response = await fetch(
-    //   `http://127.0.0.1:5000/get_polygons?hour=${hour}&resolution=${resolution}`
+    //   `${BASE_URL}/get_polygons?hour=${hour}&resolution=${resolution}`
     // );
     const response = await fetch(
-      `http://127.0.0.1:5000/get_daily_polygons?hour=${hour}&resolution=${resolution}&day=${day}`
+      `${BASE_URL}/get_daily_polygons?hour=${hour}&resolution=${resolution}&day=${day}`
     );
     const data = await response.json();
     console.log("data", data);
