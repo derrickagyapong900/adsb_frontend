@@ -81,14 +81,14 @@ function App() {
     if (parameterSelect == "nic") {
       setFillColors({
         value: "average_nic",
-        activeColor: "#219878", // Color for average_nic > 7
-        defaultColor: "#363636", // Default color
+        activeColor: "#219878", // Color for average_nic < 7
+        defaultColor: "red", // Default color
       });
     } else if (parameterSelect == "nacp") {
       setFillColors({
         value: "average_nacp",
-        activeColor: "#FF5733", // Color for average_nic > 7
-        defaultColor: "#363636", // Default color
+        activeColor: "#363636", // Color for average_nic > 7
+        defaultColor: "#FF5733", // Default color
       });
     } else if (parameterSelect == "nacv") {
       setFillColors({
