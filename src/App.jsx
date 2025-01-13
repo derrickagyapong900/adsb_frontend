@@ -10,7 +10,7 @@ const INITIAL_CENTER = [-95.712891, 37.09024];
 const INITIAL_ZOOM = 3.2;
 
 // http://127.0.0.1:5000
-const BASE_URL = "https://adsb-backend.onrender.com"
+const BASE_URL = "https://adsb-backend.onrender.com:5000"
 
 function App() {
   const mapBoxAccessToken =
